@@ -7,9 +7,13 @@ const routes = require('./routes/routes')
 const app = express()
 
 db.connection()
-
+app.use(express.json())
 app.use('/api',routes)
-app.use(express.urlencoded({extended : true}))
+
+//habilitado para resceber o request no formato json
+
+//app.use(express.urlencoded({ extended: true }))
+
 
 
 const port = process.env.PORT || 8080
