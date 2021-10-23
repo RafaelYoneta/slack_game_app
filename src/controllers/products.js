@@ -24,13 +24,17 @@ async function post(req,res){
     const {
         name,
         brand,
-        price
+        price,
+        createdOn,
+        removedOn,
     } = req.body
 
     const product = new ProdcutModel({
         name,
         brand,
-        price
+        price,
+        createdOn,
+        removedOn,
     }) 
 
 
@@ -48,7 +52,7 @@ async function put(req,res){
 
     try{        
         const product = await ProdcutModel.findOneAndUpdate({_id:id},req.body,{new:true})       
-        
+
         res.send({
           message:'sucesso',
           product 
@@ -62,8 +66,28 @@ async function put(req,res){
     }
 }
 
+async function remove(req,res){
+    const {id} = req.params
+    let message=''
+
+    //ainda não esta avisando quando não há mais uma opção com o id desejado
+    try{
+        const remove = await ProdcutModel.findOneAndDelete({_id:id})
+        message = "success"
+    }catch(error){
+        message = `Error: ${error}`
+    }
+
+
+    res.send({
+        "message": message
+    })
+
+}
+
 module.exports = {
     get,
     post,
-    put
+    put,
+    remove
 }

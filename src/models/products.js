@@ -4,6 +4,8 @@ const schema = new mongoose.Schema({
     name: String,
     brand: String,
     price: Number,
+    createdOn:Date,
+    removedOn:Date,
 
 })
 
