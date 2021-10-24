@@ -2,8 +2,6 @@ const mongoose = require('mongoose')
 
 function connection(){
 
-    //mongoose.set('useNewUrlParser',true)
-    //mongoose.set('useUnifiedTopology',true)
 
 
     mongoose.connect(process.env.MONGO_CONNECTION_STRING)
