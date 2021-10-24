@@ -1,6 +1,6 @@
 
 const ProdcutModel = require('../models/products')
-
+ 
 
 async function get(req,res){
 
