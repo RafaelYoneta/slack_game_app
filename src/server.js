@@ -11,6 +11,8 @@ const db = require ('./database/db.js')
 const routes = require('./routes/routes')
 const app = express()
 
+console.log(process.env.NODE_ENV)
+
 db.connection()
 
 const allowedOrigin = [
