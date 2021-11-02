@@ -88,7 +88,7 @@ async function findArena(req,res){
 
 async function test (req,res){
     
-    const body = req.body
+    const body = req
     console.log(body)
     res.sendStatus(200)
 }
