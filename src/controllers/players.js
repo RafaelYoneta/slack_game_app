@@ -87,13 +87,15 @@ async function findArena(req,res){
 }
 
 async function test (req,res){
-    console.log(res)
-    res.send(res)
+    
+    const body = req.body
+    console.log(body)
+    res.sendStatus(200)
 }
 
 
 module.exports = {
     get,
     findArena,
-    test
+    test,
 }
