@@ -26,11 +26,11 @@ async function overallRequest(req,res){
     
     console.log(req.body)
     
-    console.log(req.body.params)
+    console.log(req.body.user_name)
     
-    console.log(req.body.username)
+    console.log(req.body.user_id)
 
-    res.status(200).send(req.body)
+    res.status(200).send(req.body.user_name)
 /* 
     const {email} = req.body.user.username
     
