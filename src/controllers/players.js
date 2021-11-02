@@ -1,3 +1,4 @@
+const Axios = require('axios')
 const PlayerModel = require('../models/players')
 const ArenaModel = require('../models/arena')
 
@@ -63,12 +64,21 @@ async function findArena(req,res){
         new_player.save()
        // let player = await PlayerModel.findOneAndUpdate(obj,{arena:arenaId},{new:true})
 
-         msg = `voce entrou na arena ${arena[0].name}` 
+         msg = `voce entrou na arena :hocho::hocho::hocho: ${arena[0].name}` 
 
 
     } else if (player.length ==1 ){
          msg = 'Prepare-se, a batalha começa em breve!!'
     }
+
+    Axios({
+        method: 'post',                     
+        url: 'https://hooks.slack.com/services/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',
+        data: {
+          text:msg
+        }
+      });
+
 
     res.send(msg)
 
