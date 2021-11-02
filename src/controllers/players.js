@@ -22,12 +22,12 @@ async function get (req,res){
 async function overallRequest(req,res){
 
     
-
-    console.log(req.body.callback_id)
-    console.log(req.body.user.username)
+    
+    const body = req.body
+    console.log(body)
 
     res.status(200).send('Bem vindo')
-
+/* 
     const {email} = req.body.user.username
     
     const obj = email ? {email:email} : null
@@ -88,14 +88,7 @@ async function overallRequest(req,res){
 
 
     res.send(msg)
-
-}
-
-async function test (req,res){
-    
-    const body = req.body
-    console.log(body)
-    res.sendStatus(200)
+ */
 }
 
 
