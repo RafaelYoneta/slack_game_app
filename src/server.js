@@ -28,7 +28,7 @@ app.use(cors({
 
         //allowed only selecteted origins 
         if(!allowedOrigin.includes(origin)){
-            allowed = false
+            allowed = true
         }
 
         callback(null,allowed)
