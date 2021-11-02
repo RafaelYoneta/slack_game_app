@@ -86,8 +86,14 @@ async function findArena(req,res){
 
 }
 
+async function test (req,res){
+    console.log(res)
+    res.send(res)
+}
+
 
 module.exports = {
     get,
-    findArena
+    findArena,
+    test
 }
