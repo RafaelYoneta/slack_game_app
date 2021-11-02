@@ -23,10 +23,10 @@ async function overallRequest(req,res){
 
     
     
-    const body = req.body
+    const body = req.body.payload.user
     console.log(body)
 
-    res.status(200).send('Bem vindo')
+    res.status(200).send(req.body)
 /* 
     const {email} = req.body.user.username
     
