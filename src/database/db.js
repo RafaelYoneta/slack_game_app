@@ -4,7 +4,6 @@ function connection(){
 
 
     
-    console.log(process.env.SEC_CONSTRING)
     mongoose.connect(process.env.MONGO_CONNECTION_STRING)
 
     const db = mongoose.connection

@@ -1,11 +1,15 @@
 const router = require('express').Router()
 
-const ProductiController = require('../controllers/products')
+const PlayerController = require('../controllers/players')
 
+//router.get('/products/:id?', ProductiController.get)
+//router.post('/products', ProductiController.post)
+//router.put('/products/:id', ProductiController.put)
+//router.delete('/products/:id',ProductiController.remove)
 
-router.get('/products/:id?', ProductiController.get)
-router.post('/products', ProductiController.post)
-router.put('/products/:id', ProductiController.put)
-router.delete('/products/:id',ProductiController.remove)
+router.get('/players/:email?', PlayerController.get)
+
+router.post('/enter_arena/:email', PlayerController.findArena)
+
 
 module.exports = router

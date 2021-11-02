@@ -1,5 +1,5 @@
-
-const ProdcutModel = require('../models/products')
+/* const Axios = require('axios')
+//const WeaponModel = require('../models/weapons')
  
 
 async function get(req,res){
@@ -7,9 +7,22 @@ async function get(req,res){
     const {id} = req.params
 
     const obj = id ? {_id: id} : null
+
     try{
-        const products = await ProdcutModel.find(obj)
-        res.send(products)
+        const weapons = await WeaponModel.find(obj)
+
+        Axios({
+            method: 'post',                     
+            url: 'https://hooks.slack.com/services/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',
+            data: {
+              text:":star:"
+            }
+          });
+
+        console.log("foi")
+        res.send(weapons)
+
+        
     }
     catch(error){
         res.status(404).send('Not find')
@@ -23,16 +36,23 @@ async function post(req,res){
     try{
     const {
         name,
-        brand,
-        price,
+        rarity,
+        code,
+        mind_damage,
+        max_damage,
+        status,
         createdOn,
         removedOn,
+
     } = req.body
 
-    const product = new ProdcutModel({
+    const product = new WeaponModel({
         name,
-        brand,
-        price,
+        rarity,
+        code,
+        mind_damage,
+        max_damage,
+        status,
         createdOn,
         removedOn,
     }) 
@@ -51,7 +71,7 @@ async function put(req,res){
     const {id} = req.params
 
     try{        
-        const product = await ProdcutModel.findOneAndUpdate({_id:id},req.body,{new:true})       
+        const product = await WeaponModel.findOneAndUpdate({_id:id},req.body,{new:true})       
 
         res.send({
           message:'sucesso',
@@ -72,7 +92,7 @@ async function remove(req,res){
 
     //ainda não esta avisando quando não há mais uma opção com o id desejado
     try{
-        const remove = await ProdcutModel.findOneAndDelete({_id:id})
+        const remove = await WeaponModel.findOneAndDelete({_id:id})
         message = "success"
     }catch(error){
         message = `Error: ${error}`
@@ -90,4 +110,4 @@ module.exports = {
     post,
     put,
     remove
-}
+} */

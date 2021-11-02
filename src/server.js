@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-//require('dotenv').config({path:__dirname+'/../.env'})
+require('dotenv').config({path:__dirname+'/../.env'})
 
 
 
@@ -10,10 +10,6 @@ const cors = require('cors')
 const db = require ('./database/db.js')
 const routes = require('./routes/routes')
 const app = express()
-
-console.log(process.env.NODE_ENV)
-
-console.log(process.env.SEC_CONSTRING)
 
 db.connection()
 
