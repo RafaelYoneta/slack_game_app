@@ -36,6 +36,7 @@ app.use(cors({
 }))
 
 app.use(express.json())
+app.use(express.urlencoded({extended: true }))
 app.use('/api',routes)
 //habilitado para resceber o request no formato json
 
