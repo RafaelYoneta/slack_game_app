@@ -21,6 +21,8 @@ async function get (req,res){
 
 async function findArena(req,res){
 
+    console.log(req)
+
     const {email} = req.params
     
     const obj = email ? {email:email} : null
