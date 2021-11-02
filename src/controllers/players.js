@@ -19,11 +19,16 @@ async function get (req,res){
 
 
 
-async function findArena(req,res){
+async function overallRequest(req,res){
 
-    console.log(req)
+    
 
-    const {email} = req.params
+    console.log(req.body.callback_id)
+    console.log(req.body.user.username)
+
+    res.status(200).send('Bem vindo')
+
+    const {email} = req.body.user.username
     
     const obj = email ? {email:email} : null
 
@@ -96,6 +101,5 @@ async function test (req,res){
 
 module.exports = {
     get,
-    findArena,
-    test,
+    overallRequest,
 }
