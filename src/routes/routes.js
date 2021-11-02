@@ -9,7 +9,7 @@ const PlayerController = require('../controllers/players')
 
 router.get('/players/:email?', PlayerController.get)
 
-router.post('/', PlayerController.overallRequest)
+router.post('/entrar_arena', PlayerController.overallRequest)
 
 
 module.exports = router

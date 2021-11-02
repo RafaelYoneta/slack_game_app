@@ -23,8 +23,12 @@ async function overallRequest(req,res){
 
     
     
-    const body = req.body.payload.user
-    console.log(body)
+    
+    console.log(req.body)
+    
+    console.log(req.body.params)
+    
+    console.log(req.body.username)
 
     res.status(200).send(req.body)
 /* 
