@@ -5,6 +5,7 @@ const schema = new mongoose.Schema({
     email: String,
     arena: String,
     life: Number,
+    slack_id:String,
     weapon_id: String,
     hidden: Boolean,
     damage_dealt: Number,

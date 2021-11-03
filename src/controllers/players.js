@@ -26,26 +26,24 @@ async function overallRequest(req,res){
     
     console.log(req.body)
     
-    console.log(req.body.user_name)
+    res.status(200)
     
-    console.log(req.body.user_id)
+    const user_id = req.body.user_id
+    const name = req.body.user_name
 
-    res.status(200).send(req.body.user_name)
-/* 
-    const {email} = req.body.user.username
     
-    const obj = email ? {email:email} : null
+    const obj = {slack_id:user_id}
 
     let player = await PlayerModel.find(obj)
+
     const arena = await ArenaModel.find({status:"Active"})
     
     const arenaId = arena.lenght!==0 ? arena[0]._id : null
     
-    console.log(arenaId)
     
     const {
-        name,
-        emailR,
+        nameR,
+        slack_idR,
         arenaR,
         life,
         weapon_id,
@@ -55,7 +53,7 @@ async function overallRequest(req,res){
 
     const new_player = new PlayerModel({
         name,
-        email,
+        slack_id:user_id,
         hidden: false,
         weapon_id: null,
         life:100,
@@ -67,6 +65,7 @@ async function overallRequest(req,res){
 
 
     console.log(player.length)
+
     if(arena.length == 0){
          msg = 'Arena ainda não esta aberta, aguarde'
 
@@ -75,7 +74,7 @@ async function overallRequest(req,res){
         new_player.save()
        // let player = await PlayerModel.findOneAndUpdate(obj,{arena:arenaId},{new:true})
 
-         msg = `voce entrou na arena :hocho::hocho::hocho: ${arena[0].name}` 
+         msg = `<@${user_id}> entrou na arena :hocho: ${arena[0].name}` 
 
 
     } else if (player.length ==1 ){
@@ -90,9 +89,10 @@ async function overallRequest(req,res){
         }
       });
 
+      res.send(msg)
 
-    res.send(msg)
- */
+   
+
 }
 
 
