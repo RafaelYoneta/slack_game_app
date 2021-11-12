@@ -9,7 +9,21 @@ const PlayerController = require('../controllers/players')
 
 router.get('/players/:email?', PlayerController.get)
 
-router.post('/entrar_arena', PlayerController.overallRequest)
+router.post('/entrar_arena', (req,res,next) =>{
+    // Se existir faz o parse e devolve para body e se não existir manda para o next 
+
+    if(!req.body.payload){
+        next()
+    }else{
+        
+        console.log('passou aqui') 
+        const body = JSON.parse(req.body.payload)
+        req.body = body
+        next()
+    }
+} ,PlayerController.overallRequest)
+
+router.post('/procurar_arma', PlayerController.searchWeapon)
 
 
 module.exports = router
