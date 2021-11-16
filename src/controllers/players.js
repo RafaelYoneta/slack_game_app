@@ -156,7 +156,7 @@ async function searchWeapon(req,res){
                 msg = `WTF!! <@${user_id}> encontrou uma ${weapon[0].slack_weapon_code}, ${weapon[0].name}, ${weapon[0].rarity}` 
             }
 
-            console.log(msg, weapon)
+           
             const char = await PlayerModel.findOneAndUpdate({slack_id:user_id},new_weapon,{new:true})
             console.log(process.env.SLACK_CONNECTION_STRING)
             Axios({
