@@ -24,16 +24,10 @@ async function overallRequest(req,res){
 
     console.log(req.body)
     
-<<<<<<< HEAD
-    
-    
-    console.log(req.body)
-=======
     if(req.body.channel_name !== 'clash-royale-game'){
         res.status(200).send('O Jogo esta disponível apenas no canal clash-royale-game')
     }else{
        
->>>>>>> e56cf78 (find weapon method created)
     
     res.status(200)
     
@@ -58,6 +52,7 @@ async function overallRequest(req,res){
         weapon_id,
         hidden,
         round_actionR,
+        damage_dealtR,
 
     } = req.body
 
@@ -69,6 +64,7 @@ async function overallRequest(req,res){
         life:100,
         arena:arenaId,
         round_action:0,
+        damage_dealt:0,
     }) 
     
     let msg
@@ -87,8 +83,6 @@ async function overallRequest(req,res){
 
          msg = `<@${user_id}> entrou na arena :hocho: ${arena[0].name}` 
 
-<<<<<<< HEAD
-=======
          
          Axios({
              method: 'post',                     
@@ -98,7 +92,6 @@ async function overallRequest(req,res){
              }
            });
         msg ='Leeeeeroy Jenkins'
->>>>>>> e56cf78 (find weapon method created)
 
     } else if (player.length ==1 ){
          msg = 'Prepare-se, a batalha começa em breve!!'
@@ -106,15 +99,14 @@ async function overallRequest(req,res){
 
     Axios({
         method: 'post',                     
-        url: 'https://hooks.slack.com/services/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',
+        url: process.env.SLACK_CONNECTION_STRING,
         data: {
           text:msg
         }
       });
+    }
+}
 
-<<<<<<< HEAD
-      res.send(msg)
-=======
 async function searchWeapon(req,res){
 
     
@@ -132,7 +124,7 @@ async function searchWeapon(req,res){
         if(player[0].round_action ==1){
             res.send('Aguarde o próximo turno para escolher uma ação')
         }else if(player.length !== 0){
-            const weapon_cod = Math.round(Math.random() * 2)
+            const weapon_cod = Math.round(Math.random() * 2)//mudar a logica de pegar a quantidade de armas
             const weapon_obj = {weapon_code:weapon_cod}
         
             const weapon = await WeaponModel.find(weapon_obj)
@@ -158,7 +150,7 @@ async function searchWeapon(req,res){
 
            
             const char = await PlayerModel.findOneAndUpdate({slack_id:user_id},new_weapon,{new:true})
-            console.log(process.env.SLACK_CONNECTION_STRING)
+            
             Axios({
                 method: 'post',                     
                 url: process.env.SLACK_CONNECTION_STRING,
@@ -168,9 +160,9 @@ async function searchWeapon(req,res){
               });
 
             res.send(`Voce conseguiu uma arma ${weapon[0].name} / ${weapon[0].rarity} `)
->>>>>>> e56cf78 (find weapon method created)
 
-   
+            
+
 
 
 
@@ -183,8 +175,125 @@ async function searchWeapon(req,res){
 
 }
 
+async function attack(req,res){
+
+
+    const my_player = req.body.user_id
+    const players = await PlayerModel.find()
+
+    //achar o meu player e minha arma
+    let my_player_params 
+    let my_player_position  
+    let live_players = 0
+
+    for(let n=0; n<=players.length-1; n++){
+      //contar quantos jogadores vivos
+      if(players[n].life > 0){
+        live_players +=1
+      }
+
+      if(players[n].slack_id==my_player){
+          my_player_params = players[n]
+          my_player_position = n 
+        }
+    }
+    let msg_attack
+    let send_resp = false
+    let attack_success = Math.random() * 10
+    console.log(live_players)
+
+
+    //logica se o jogador já esta morto
+
+
+    
+    if(players[my_player_position].life == 0){
+        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) esta fora de combate!!`
+        send_resp = true
+
+    }else{
+        if(live_players<=1){
+            msg_attack = 'Last man standing!! Não há mais jogadores vivos na partida'
+        }else{
+
+            
+            
+            //se o usuário não tem arma
+            if(!players[my_player_position].weapon){
+                msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar sem uma arma *...... e Falhou!!*`
+                send_resp = true
+            }else{
+                
+                
+                if(attack_success < 2.5){
+                    msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) *atacou...... e Falhou!!*`
+                    send_resp = true
+                }else{
+                    
+                    
+                    //escolher jogar a ser atacado
+                    let enemy_params
+                    let enemy_position
+                    let enemy_found = false
+                    //logica para quando só tiver 1 ou 0  inimigos vivos
+                    
+                    
+                    //logica se o jogador já morreu
+                    
+                    while(enemy_found == false){
+                        
+                        enemy_position = Math.round(Math.random() * (players.length-1))
+                        
+                        if(players[enemy_position].slack_id !== req.body.user_id && players[enemy_position].life > 0){    
+                            
+                            enemy_found = true
+                        }
+                    }
+                    
+                    //diminuir vida do atacado e aumentar pontos do atacante
+                    
+                    
+                    let my_player_damage = Math.round((players[my_player_position].weapon.max_dmg - players[my_player_position].weapon.min_dmg) *Math.random()) + players[my_player_position].weapon.min_dmg   
+                    
+                    
+                    //atacado morreu? 
+                    if(players[enemy_position].life <= my_player_damage){
+                        
+                        players[enemy_position].life = 0
+                        msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life}) com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  ---- <@${players[enemy_position].slack_id}> morreu  :skull: `
+                        send_resp = true
+                    }else if(players[enemy_position].life > my_player_damage){
+                        
+                        players[enemy_position].life = players[enemy_position].life - my_player_damage
+                        msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life}) com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  `
+                        send_resp = true
+                    }
+                    
+                    players[my_player_position].damage_dealt = my_player_damage
+                    //salvar alterações
+                    //await PlayerModel.findOneAndUpdate({slack_id:user_id},new_weapon,{new:true})
+                }
+                    
+                }
+            }
+        }
+    if(send_resp){
+        Axios({
+            method: 'post',                     
+            url: process.env.SLACK_CONNECTION_STRING,
+            data: {
+              text:msg_attack
+            }
+          });
+
+    }
+    res.send(msg_attack)
+}
+
 
 module.exports = {
     get,
     overallRequest,
+    searchWeapon,
+    attack,
 }

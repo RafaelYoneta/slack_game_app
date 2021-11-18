@@ -25,5 +25,7 @@ router.post('/entrar_arena', (req,res,next) =>{
 
 router.post('/procurar_arma', PlayerController.searchWeapon)
 
+router.post('/atacar',PlayerController.attack)
+
 
 module.exports = router
