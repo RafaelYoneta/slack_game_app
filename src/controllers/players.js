@@ -200,35 +200,31 @@ async function attack(req,res){
     let msg_attack
     let send_resp = false
     let attack_success = Math.random() * 10
-    console.log(live_players)
 
-
-    //logica se o jogador já esta morto
-
-
-    
-    if(players[my_player_position].life == 0){
-        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) esta fora de combate!!`
-        send_resp = true
-
+    if(players[my_player_position].round_action == 1){
+        msg_attack = 'Aguarde o próximo turno para escolher uma ação'
     }else{
-        if(live_players<=1){
-            msg_attack = 'Last man standing!! Não há mais jogadores vivos na partida'
-        }else{
 
-            
-            
-            //se o usuário não tem arma
-            if(!players[my_player_position].weapon){
-                msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar sem uma arma *...... e Falhou!!*`
-                send_resp = true
+        
+        //logica se o jogador já esta morto    
+        if(players[my_player_position].life == 0){
+            msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) esta fora de combate!!`
+            send_resp = true
+
+        }else{
+            if(live_players<=1){
+                msg_attack = 'Last man standing!! Não há mais jogadores vivos na partida'
             }else{
                 
                 
-                if(attack_success < 2.5){
-                    msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) *atacou...... e Falhou!!*`
+                
+                //se o usuário não tem arma
+                if(!players[my_player_position].weapon){
+                    msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar sem uma arma *...... e Falhou!!*`
                     send_resp = true
                 }else{
+                    
+                    
                     
                     
                     //escolher jogar a ser atacado
@@ -250,6 +246,11 @@ async function attack(req,res){
                         }
                     }
                     
+                    if(attack_success < 2.5){
+                        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life})*...... e Falhou!!*`
+                        send_resp = true
+                    }else{
+                        
                     //diminuir vida do atacado e aumentar pontos do atacante
                     
                     
@@ -268,15 +269,20 @@ async function attack(req,res){
                         msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life}) com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  `
                         send_resp = true
                     }
-                    
-                    players[my_player_position].damage_dealt = my_player_damage
+                    players[my_player_position].round_action = 1
+                    players[my_player_position].damage_dealt += my_player_damage
                     //salvar alterações
-                    //await PlayerModel.findOneAndUpdate({slack_id:user_id},new_weapon,{new:true})
-                }
+                    const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
                     
+                    const b = await PlayerModel.findOneAndUpdate({slack_id:players[enemy_position].slack_id},players[enemy_position],{new:true})
+                    
+                   }   
+                
                 }
             }
         }
+    }
+
     if(send_resp){
         Axios({
             method: 'post',                     
