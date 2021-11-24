@@ -321,7 +321,7 @@ async function start_arena (req,res){
     //inicia partida
     const arena = await ArenaModel.find({id:arenaId})
    
-    let msg
+    let msg = '\n *fim da arena ----- imprimindo resultados* \n'
     let arena_players
     
     Axios({
@@ -348,7 +348,8 @@ async function start_arena (req,res){
            
             //verifica se ainda há jogadores vivos
             if(arena_players.length <= 1){
-                msg = `We have a winner!!!! ${arena_players.length} Jogadores na arena `
+                msg = `\n We have a winner!!!! ${arena_players.length} Jogadores na arena \n ---- *imprimindo resultados*`
+                
             }else{
     
                 await PlayerModel.updateMany({},{$set:{"round_action":0}})
@@ -372,6 +373,14 @@ async function start_arena (req,res){
         }
         
     }   
+    
+    Axios({
+        method: 'post',                     
+        url: process.env.SLACK_CONNECTION_STRING,
+        data: {
+            text:msg
+        }
+    })
 
     const ranking = await PlayerModel.find({alive:true}).sort({damage_dealt: 'desc'})
 
