@@ -1,4 +1,5 @@
 const Axios = require('axios')
+const delay = require('delay');
 const PlayerModel = require('../models/players')
 const ArenaModel = require('../models/arena')
 const WeaponModel = require('../models/weapons')
@@ -53,6 +54,7 @@ async function overallRequest(req,res){
         hidden,
         round_actionR,
         damage_dealtR,
+        aliveR,
 
     } = req.body
 
@@ -65,6 +67,7 @@ async function overallRequest(req,res){
         arena:arenaId,
         round_action:0,
         damage_dealt:0,
+        alive: true,
     }) 
     
     let msg
@@ -184,6 +187,7 @@ async function attack(req,res){
     //achar o meu player e minha arma
     let my_player_params 
     let my_player_position  
+    let msg
     let live_players = 0
 
     for(let n=0; n<=players.length-1; n++){
@@ -202,7 +206,7 @@ async function attack(req,res){
     let attack_success = Math.random() * 10
 
     if(players[my_player_position].round_action == 1){
-        msg_attack = 'Aguarde o próximo turno para escolher uma ação'
+        msg = 'Aguarde o próximo turno para escolher uma ação'
     }else{
 
         
@@ -210,10 +214,12 @@ async function attack(req,res){
         if(players[my_player_position].life == 0){
             msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) esta fora de combate!!`
             send_resp = true
+            msg ='morto'
 
         }else{
             if(live_players<=1){
-                msg_attack = 'Last man standing!! Não há mais jogadores vivos na partida'
+                msg = 'Last man standing!! Não há mais jogadores vivos na partida'
+                 
             }else{
                 
                 
@@ -222,6 +228,9 @@ async function attack(req,res){
                 if(!players[my_player_position].weapon){
                     msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar sem uma arma *...... e Falhou!!*`
                     send_resp = true
+                    players[my_player_position].round_action = 1
+                    const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
+                    msg ='falhou'
                 }else{
                     
                     
@@ -235,7 +244,7 @@ async function attack(req,res){
                     
                     
                     //logica se o jogador já morreu
-                    
+                    //*** verificar se o jogador não esta escondido
                     while(enemy_found == false){
                         
                         enemy_position = Math.round(Math.random() * (players.length-1))
@@ -243,12 +252,16 @@ async function attack(req,res){
                         if(players[enemy_position].slack_id !== req.body.user_id && players[enemy_position].life > 0){    
                             
                             enemy_found = true
+
                         }
                     }
                     
                     if(attack_success < 2.5){
                         msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life})*...... e Falhou!!*`
                         send_resp = true
+                        players[my_player_position].round_action = 1
+                        const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
+                        msg ='falhou'
                     }else{
                         
                     //diminuir vida do atacado e aumentar pontos do atacante
@@ -256,18 +269,21 @@ async function attack(req,res){
                     
                     let my_player_damage = Math.round((players[my_player_position].weapon.max_dmg - players[my_player_position].weapon.min_dmg) *Math.random()) + players[my_player_position].weapon.min_dmg   
                     
-                    
                     //atacado morreu? 
                     if(players[enemy_position].life <= my_player_damage){
                         
                         players[enemy_position].life = 0
+                        players[enemy_position].alive = false   
                         msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life}) com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  ---- <@${players[enemy_position].slack_id}> morreu  :skull: `
                         send_resp = true
+                        msg ='atacou'
+
                     }else if(players[enemy_position].life > my_player_damage){
                         
                         players[enemy_position].life = players[enemy_position].life - my_player_damage
                         msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life}) com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  `
                         send_resp = true
+                        msg ='atacou'
                     }
                     players[my_player_position].round_action = 1
                     players[my_player_position].damage_dealt += my_player_damage
@@ -293,8 +309,97 @@ async function attack(req,res){
           });
 
     }
-    res.send(msg_attack)
+
+    res.send(msg)
 }
+
+async function start_arena (req,res){
+
+    const arena_req = req.body
+    const arenaId = arena_req.arenaId
+    
+    //inicia partida
+    const arena = await ArenaModel.find({id:arenaId})
+   
+    let msg
+    let arena_players
+    
+    Axios({
+        method: 'post',                     
+        url: process.env.SLACK_CONNECTION_STRING,
+        data: {
+            text:'*Preparem-se a Arena esta prestes a começar!!!!*'
+        }
+    })
+    await delay(10000)
+
+
+    //seleciona a arena que deve iniciar
+    if(arena.length !== 1){
+        msg = 'Arena não localizada'
+    }else{
+
+        
+        //pega os parametros da partida (numero de rounds e duração por round)
+        for(n=1 ; n<=arena[0].rounds; n++){
+
+            //pega os jogadores que estão na partida
+            arena_players = await PlayerModel.find({alive:true})
+           
+            //verifica se ainda há jogadores vivos
+            if(arena_players.length <= 1){
+                msg = `We have a winner!!!! ${arena_players.length} Jogadores na arena `
+            }else{
+    
+                await PlayerModel.updateMany({},{$set:{"round_action":0}})
+                let msg_arena = `*Round ${n}!!* ---- Fight!!!`
+                
+                //anuncia o round iniciando
+                Axios({
+                    method: 'post',                     
+                    url: process.env.SLACK_CONNECTION_STRING,
+                    data: {
+                        text:msg_arena
+                    }
+                })
+                
+                //espera duração por round
+                await delay(arena[0].round_duration)
+                
+                //repete e volta a ação do round para 0                
+                
+            }
+        }
+        
+    }   
+
+    const ranking = await PlayerModel.find({alive:true}).sort({damage_dealt: 'desc'})
+
+    let qnt
+    let pos = 1
+    if(ranking.length>10){qnt=10}else{qnt=ranking.length} 
+   
+    for(i=0;i<qnt;i++){ 
+        console.log(ranking[i])
+        position = `Posição ${pos} --- Dano Total: ${ranking[i].damage_dealt} --- <@${ranking[i].slack_id}> `
+        pos +=1
+        Axios({
+            method: 'post',                     
+            url: process.env.SLACK_CONNECTION_STRING,
+            data: {
+                text:position
+            }
+        })
+    }
+    
+    
+    
+    
+    //fim da partida e anuncio do ranking de jogadores
+    
+    res.send(msg)
+}
+
 
 
 module.exports = {
@@ -302,4 +407,5 @@ module.exports = {
     overallRequest,
     searchWeapon,
     attack,
+    start_arena,
 }

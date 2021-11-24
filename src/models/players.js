@@ -6,6 +6,7 @@ const schema = new mongoose.Schema({
     arena: String,
     life: Number,
     slack_id:String,
+    alive: Boolean,
     weapon:{
         min_dmg: Number, 
         max_dmg: Number,

@@ -5,6 +5,7 @@ const schema = new mongoose.Schema({
     status: String,
     total_players: Number,
     rounds: Number,
+    round_duration: Number,
     createdOn:Date,
     removedOn:Date,
 

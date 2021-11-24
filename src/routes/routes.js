@@ -27,5 +27,7 @@ router.post('/procurar_arma', PlayerController.searchWeapon)
 
 router.post('/atacar',PlayerController.attack)
 
+router.post('/iniciar_arena',PlayerController.start_arena)
+
 
 module.exports = router
