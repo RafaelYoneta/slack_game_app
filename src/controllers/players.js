@@ -257,7 +257,7 @@ async function attack(req,res){
                     }
                     
                     if(attack_success < 2.5){
-                        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life})*...... e Falhou!!*`
+                        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar  <@${players[enemy_position].slack_id}>  *...... e Falhou!!* \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida`
                         send_resp = true
                         players[my_player_position].round_action = 1
                         const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
@@ -274,14 +274,14 @@ async function attack(req,res){
                         
                         players[enemy_position].life = 0
                         players[enemy_position].alive = false   
-                        msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life}) com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  ---- <@${players[enemy_position].slack_id}> morreu  :skull: `
+                        msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!* \n <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*agora tem (:heart: ${players[enemy_position].life}) vida  ---- <@${players[enemy_position].slack_id}> morreu  :skull: :skull: :skull: `
                         send_resp = true
                         msg ='atacou'
 
                     }else if(players[enemy_position].life > my_player_damage){
                         
                         players[enemy_position].life = players[enemy_position].life - my_player_damage
-                        msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> (:heart: ${players[enemy_position].life}) com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  `
+                        msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida `
                         send_resp = true
                         msg ='atacou'
                     }
@@ -317,6 +317,8 @@ async function start_arena (req,res){
 
     const arena_req = req.body
     const arenaId = arena_req.arenaId
+
+    res.status(200)
     
     //inicia partida
     const arena = await ArenaModel.find({id:arenaId})
@@ -382,15 +384,15 @@ async function start_arena (req,res){
         }
     })
 
-    const ranking = await PlayerModel.find({alive:true}).sort({damage_dealt: 'desc'})
+    //imprimir o resultado dos vivos
+    const ranking_vivos = await PlayerModel.find({alive:true}).sort({damage_dealt: 'desc'})
 
-    let qnt
     let pos = 1
-    if(ranking.length>10){qnt=10}else{qnt=ranking.length} 
+
+    console.log(ranking_vivos)
    
-    for(i=0;i<qnt;i++){ 
-        console.log(ranking[i])
-        position = `Posição ${pos} --- Dano Total: ${ranking[i].damage_dealt} --- <@${ranking[i].slack_id}> `
+    for(i=0;i<ranking_vivos.length;i++){ 
+        position = `Posição ${pos} --- Dano Total: ${ranking_vivos[i].damage_dealt} --- <@${ranking_vivos[i].slack_id}> `
         pos +=1
         Axios({
             method: 'post',                     
@@ -399,6 +401,7 @@ async function start_arena (req,res){
                 text:position
             }
         })
+        await delay(500)
     }
     
     
