@@ -29,5 +29,9 @@ router.post('/atacar',PlayerController.attack)
 
 router.post('/iniciar_arena',PlayerController.start_arena)
 
+router.post('/procurar_vida',PlayerController.heal)
+
+router.post('/invisivel', PlayerController.hide)
+
 
 module.exports = router

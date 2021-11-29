@@ -23,7 +23,7 @@ async function get (req,res){
 
 async function overallRequest(req,res){
 
-    console.log(req.body)
+
     
     if(req.body.channel_name !== 'clash-royale-game'){
         res.status(200).send('O Jogo esta disponível apenas no canal clash-royale-game')
@@ -65,7 +65,7 @@ async function overallRequest(req,res){
         weapon_id: null,
         life:100,
         arena:arenaId,
-        round_action:0,
+        round_action:1,
         damage_dealt:0,
         alive: true,
     }) 
@@ -123,9 +123,16 @@ async function searchWeapon(req,res){
         const name = req.body.user_name
         const obj = {slack_id:user_id}       
         const player = await PlayerModel.find(obj)
+        
 
         if(player[0].round_action ==1){
             res.send('Aguarde o próximo turno para escolher uma ação')
+        }else if(player[0].are){
+
+        
+        }else if(player[0].alive !== true){
+            res.send('Você esta fora de combate :skull:')
+               
         }else if(player.length !== 0){
             const weapon_cod = Math.round(Math.random() * 2)//mudar a logica de pegar a quantidade de armas
             const weapon_obj = {weapon_code:weapon_cod}
@@ -412,6 +419,124 @@ async function start_arena (req,res){
     res.send(msg)
 }
 
+async function heal(req,res){
+
+    res.status(200)
+    //verificar se o canal esta correto 
+    let send_resp = false
+    const life_points = 30
+    let msg
+    const user_heal = req.body.user_id
+    
+    if(req.body.channel_name !== 'clash-royale-game'){
+        res.status(200).send('O Jogo esta disponível apenas no canal clash-royale-game')
+    }else{
+
+        //procurar usuário
+        const player = await PlayerModel.find({slack_id:user_heal})
+        
+        //verificar se o usuário esta em uma arena
+        if(player.length !== 1){
+            msg = 'Você ainda não entrou na arena, digite /entrar_arena para começar'
+            
+            //verificar se o usuário já usou o comando
+        }else if(player[0].round_action == 1){
+            msg = 'Aguarde o próximo round para enviar o comeando'
+            //verificar se o usuário esta vivo
+        }else if(player[0].alive !== true){
+            msg = 'Voce esta fora de combate :skull:'
+        }else{
+            let heal_success = Math.round(Math.random() * 10) <=3 ? true : false
+            //falha ou sucesso na tenatitva
+            if(heal_success){
+                //Ajuste do max life para 100
+                player[0].life + life_points >=100 ? player[0].life =100 : player[0].life = player[0].life + life_points  
+                //atualizar o usuário
+                await PlayerModel.findOneAndUpdate({slack_id:player[0].slack_id},player[0],{new:true})
+                Axios({
+                    method: 'post',                     
+                    url: process.env.SLACK_CONNECTION_STRING,
+                    data: {
+                        text:`<@${player[0].slack_id}> tentou recuperar vida e .... recuperou ${life_points} pontos de vida \n <@${player[0].slack_id}> agora tem (:heart: ${player[0].life}) vida  `
+                    }
+                })
+                msg = 'Recuperou vida'
+
+                
+            }else if(!heal_success){
+                Axios({
+                    method: 'post',                     
+                    url: process.env.SLACK_CONNECTION_STRING,
+                    data: {
+                        text:`<@${player[0].slack_id}> tentou recuperar vida e .... * Falhouuuu!! * \n <@${player[0].slack_id}> permanece com (:heart: ${player[0].life}) vida  `
+                    }
+            })
+            msg = 'Falhouuu .. deu azar'
+            
+            
+        }
+        }
+    }
+    
+    res.send(msg)
+ 
+    
+    
+    
+}
+
+
+async function hide(req,res){
+    
+    res.status(200)
+    //verificar se o canal esta correto 
+    
+    let msg
+    const user_hide = req.body.user_id
+    
+    if(req.body.channel_name !== 'clash-royale-game'){
+        res.status(200).send('O Jogo esta disponível apenas no canal clash-royale-game')
+    }else{
+
+        //procurar usuário
+        const player = await PlayerModel.find({slack_id:user_hide})
+        
+        //verificar se o usuário esta em uma arena
+        if(player.length !== 1){
+            msg = 'Você ainda não entrou na arena, digite /entrar_arena para começar'
+            
+            //verificar se o usuário já usou o comando
+        }else if(player[0].round_action == 1){
+            msg = 'Aguarde o próximo round para enviar o comeando'
+            //verificar se o usuário esta vivo
+        }else if(player[0].alive !== true){
+            msg = 'Voce esta fora de combate :skull:'
+        }else{
+            
+            player[0].hidden = true
+            player[0].round_action = 1
+            await PlayerModel.findOneAndUpdate({slack_id:player[0].slack_id},player[0],{new:true})
+            
+                Axios({
+                    method: 'post',                     
+                    url: process.env.SLACK_CONNECTION_STRING,
+                    data: {
+                        text:`<@${player[0].slack_id}>  (:heart: ${player[0].life}) vida esta invisível  dos outros jogadores neste round e não pode ser atacado`
+                    }
+            })
+            msg = 'Vc esta invisível'
+            
+            
+        
+        }
+    }
+    
+    res.send(msg)
+ 
+    
+    
+    
+}
 
 
 module.exports = {
@@ -420,4 +545,6 @@ module.exports = {
     searchWeapon,
     attack,
     start_arena,
+    heal,
+    hide,
 }
