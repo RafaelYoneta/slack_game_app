@@ -256,7 +256,7 @@ async function attack(req,res){
                         
                         enemy_position = Math.round(Math.random() * (players.length-1))
                         
-                        if(players[enemy_position].slack_id !== req.body.user_id && players[enemy_position].life > 0){    
+                        if(players[enemy_position].slack_id !== req.body.user_id && players[enemy_position].life > 0 && player[enemy_position].hidden == false){    
                             
                             enemy_found = true
 
@@ -515,7 +515,7 @@ async function hide(req,res){
             
             player[0].hidden = true
             player[0].round_action = 1
-            await PlayerModel.findOneAndUpdate({slack_id:player[0].slack_id},player[0],{new:true})
+            await PlayerModel.findOneAndUpdate({slack_id:player[0]. slack_id},player[0],{new:true})
             
                 Axios({
                     method: 'post',                     
@@ -532,9 +532,6 @@ async function hide(req,res){
     }
     
     res.send(msg)
- 
-    
-    
     
 }
 
