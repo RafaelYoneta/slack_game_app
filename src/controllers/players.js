@@ -244,6 +244,8 @@ async function attack(req,res){
                     let enemy_params
                     let enemy_position
                     let enemy_found = false
+                    let total_player = players.length
+                    let now = 1
                     //logica para quando só tiver 1 ou 0  inimigos vivos
                     
                     
@@ -257,6 +259,13 @@ async function attack(req,res){
                             
                             enemy_found = true
 
+                        }
+                        console.log(enemy_position)
+                        console.log(enemy_found)
+                        now +=1
+                        if(now == total_player){
+                            enemy_found = true
+                            attack_success = 1
                         }
                     }
                     

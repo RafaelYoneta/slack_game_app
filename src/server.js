@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-require ('newrelic')
+//require ('newrelic')
 require('dotenv').config({path:__dirname+'/../.env'})
 
 
