@@ -134,7 +134,7 @@ async function searchWeapon(req,res){
             res.send('Você esta fora de combate :skull:')
                
         }else if(player.length !== 0){
-            const weapon_cod = Math.round(Math.random() * 2)//mudar a logica de pegar a quantidade de armas
+            const weapon_cod = Math.round(Math.random() * 5)//mudar a logica de pegar a quantidade de armas
             const weapon_obj = {weapon_code:weapon_cod}
         
             const weapon = await WeaponModel.find(weapon_obj)
