@@ -172,12 +172,7 @@ async function searchWeapon(req,res){
 
             res.send(`Voce conseguiu uma arma ${weapon[0].name} / ${weapon[0].rarity} `)
 
-            
-
-
-
-
-
+        
         }else{
             res.send('Você ainda não entrou na arena, digite /entrar_arena para iniciar')
         }
@@ -197,6 +192,7 @@ async function attack(req,res){
     let my_player_position  
     let msg
     let live_players = 0
+    
 
     for(let n=0; n<=players.length-1; n++){
       //contar quantos jogadores vivos
@@ -257,7 +253,7 @@ async function attack(req,res){
                         
                         enemy_position = Math.round(Math.random() * (players.length-1))
                         
-                        if(players[enemy_position].slack_id !== req.body.user_id && players[enemy_position].life > 0 && player[enemy_position].hidden == false){    
+                        if(players[enemy_position].slack_id !== req.body.user_id && players[enemy_position].life > 0 && players[enemy_position].hidden == false){    
                             
                             enemy_found = true
 
