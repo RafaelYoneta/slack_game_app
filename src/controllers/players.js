@@ -135,6 +135,7 @@ async function searchWeapon(req,res){
                
         }else if(player.length !== 0){
             const weapon_cod = Math.round(Math.random() * 5)//mudar a logica de pegar a quantidade de armas
+            console.log(weapon_cod)
             const weapon_obj = {weapon_code:weapon_cod}
         
             const weapon = await WeaponModel.find(weapon_obj)
@@ -451,6 +452,7 @@ async function heal(req,res){
             if(heal_success){
                 //Ajuste do max life para 100
                 player[0].life + life_points >=100 ? player[0].life =100 : player[0].life = player[0].life + life_points  
+                player[0].round_action = 1
                 //atualizar o usuário
                 await PlayerModel.findOneAndUpdate({slack_id:player[0].slack_id},player[0],{new:true})
                 Axios({
