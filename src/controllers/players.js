@@ -244,7 +244,7 @@ async function attack(req,res){
                     let enemy_params
                     let enemy_position
                     let enemy_found = false
-                    let total_player = players.length
+                    let total_player = 15
                     let now = 1
                     //logica para quando só tiver 1 ou 0  inimigos vivos
                     
@@ -270,7 +270,7 @@ async function attack(req,res){
                     }
                     
                     if(attack_success < 2.5){
-                        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar  <@${players[enemy_position].slack_id}>  *...... e Falhou!!* \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida`
+                        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar   *...... e Falhou!!* \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida`
                         send_resp = true
                         players[my_player_position].round_action = 1
                         const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
