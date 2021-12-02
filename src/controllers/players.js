@@ -281,14 +281,14 @@ async function attack(req,res){
                         
                         players[enemy_position].life = 0
                         players[enemy_position].alive = false   
-                        msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!* \n <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*agora tem (:heart: ${players[enemy_position].life}) vida  ---- <@${players[enemy_position].slack_id}> morreu  :skull: :skull: :skull: `
+                        msg_attack =`:attack: <@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!* \n <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*agora tem (:heart: ${players[enemy_position].life}) vida  ---- <@${players[enemy_position].slack_id}> morreu  :skull: :skull: :skull: `
                         send_resp = true
                         msg ='atacou'
 
                     }else if(players[enemy_position].life > my_player_damage){
                         
                         players[enemy_position].life = players[enemy_position].life - my_player_damage
-                        msg_attack =`<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida `
+                        msg_attack =`:attack: <@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida `
                         send_resp = true
                         msg ='atacou'
                     }
@@ -362,7 +362,7 @@ async function start_arena (req,res){
             }else{
     
                 await PlayerModel.updateMany({},{$set:{"round_action":0}})
-                let msg_arena = `*Round ${n}!!* ---- Fight!!!`
+                let msg_arena = `*Round ${n}!!* ---- Fight --- ${arena_players.length} jogadores vivos!!!`
                 
                 //anuncia o round iniciando
                 Axios({
@@ -457,7 +457,7 @@ async function heal(req,res){
                     method: 'post',                     
                     url: process.env.SLACK_CONNECTION_STRING,
                     data: {
-                        text:`<@${player[0].slack_id}> tentou recuperar vida e .... recuperou ${life_points} pontos de vida \n <@${player[0].slack_id}> agora tem (:heart: ${player[0].life}) vida  `
+                        text:`<@${player[0].slack_id}> tentou recuperar vida e .... recuperou :heal: ${life_points} pontos de vida \n <@${player[0].slack_id}> agora tem (:heart: ${player[0].life}) vida  `
                     }
                 })
                 msg = 'Recuperou vida'
@@ -521,7 +521,7 @@ async function hide(req,res){
                     method: 'post',                     
                     url: process.env.SLACK_CONNECTION_STRING,
                     data: {
-                        text:`<@${player[0].slack_id}>  (:heart: ${player[0].life}) vida esta invisível  dos outros jogadores neste round e não pode ser atacado`
+                        text:`:evade: <@${player[0].slack_id}>  (:heart: ${player[0].life}) vida esta invisível  dos outros jogadores neste round e não pode ser atacado`
                     }
             })
             msg = 'Vc esta invisível'
