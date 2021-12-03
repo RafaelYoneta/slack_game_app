@@ -185,7 +185,7 @@ async function attack(req,res){
 
 
     const my_player = req.body.user_id
-    const players = await PlayerModel.find()
+    const players = await PlayerModel.find({alive:true})
 
     //achar o meu player e minha arma
     let my_player_params 
@@ -244,7 +244,7 @@ async function attack(req,res){
                     let enemy_params
                     let enemy_position
                     let enemy_found = false
-                    let total_player = 15
+                    let not_found = false
                     let now = 1
                     //logica para quando só tiver 1 ou 0  inimigos vivos
                     
@@ -260,17 +260,21 @@ async function attack(req,res){
                             enemy_found = true
 
                         }
-                        console.log(enemy_position)
-                        console.log(enemy_found)
                         now +=1
-                        if(now == total_player){
+                        if(now <= 10 && players[enemy_position].life > 0){
                             enemy_found = true
-                            attack_success = 1
+                            not_found=true
                         }
                     }
+                    if(not_found){
+                        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar, mas escorregou :bananadance: :bananadance: *...... e Falhou!!*`
+                        send_resp = true
+                        players[my_player_position].round_action = 1
+                        const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
+                        msg ='falhou'
                     
-                    if(attack_success < 2.5){
-                        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar   *...... e Falhou!!* \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida`
+                    }else if(attack_success < 2.5){
+                        msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar  <@${players[enemy_position].slack_id}>  *...... e Falhou!!* \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida`
                         send_resp = true
                         players[my_player_position].round_action = 1
                         const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
