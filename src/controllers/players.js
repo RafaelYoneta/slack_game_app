@@ -185,7 +185,7 @@ async function attack(req,res){
 
 
     const my_player = req.body.user_id
-    const players = await PlayerModel.find({alive:true})
+    const players = await PlayerModel.find()
 
     //achar o meu player e minha arma
     let my_player_params 
@@ -261,7 +261,7 @@ async function attack(req,res){
 
                         }
                         now +=1
-                        if(now <= 10 && players[enemy_position].life > 0){
+                        if(now > 10 && players[enemy_position].life > 0){
                             enemy_found = true
                             not_found=true
                         }
