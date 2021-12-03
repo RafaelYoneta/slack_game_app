@@ -409,7 +409,8 @@ async function start_arena (req,res){
     console.log(ranking_vivos)
    
     for(i=0;i<ranking_vivos.length;i++){ 
-        if(ranking_vivos.alive){
+        
+        if(ranking_vivos[i].alive){
             position = `Posição ${pos} --- Dano Total: ${ranking_vivos[i].damage_dealt} --- <@${ranking_vivos[i].slack_id}> `
         }else{
             position = `Posição ${pos} --- Dano Total: ${ranking_vivos[i].damage_dealt} ---:skull: :skull: <@${ranking_vivos[i].slack_id}>(morto) `    
