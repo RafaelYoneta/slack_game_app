@@ -402,14 +402,18 @@ async function start_arena (req,res){
     })
 
     //imprimir o resultado dos vivos
-    const ranking_vivos = await PlayerModel.find({alive:true}).sort({damage_dealt: 'desc'})
+    const ranking_vivos = await PlayerModel.find().sort({damage_dealt: 'desc'})
 
     let pos = 1
 
     console.log(ranking_vivos)
    
     for(i=0;i<ranking_vivos.length;i++){ 
-        position = `Posição ${pos} --- Dano Total: ${ranking_vivos[i].damage_dealt} --- <@${ranking_vivos[i].slack_id}> `
+        if(ranking_vivos.alive){
+            position = `Posição ${pos} --- Dano Total: ${ranking_vivos[i].damage_dealt} --- <@${ranking_vivos[i].slack_id}> `
+        }else{
+            position = `Posição ${pos} --- Dano Total: ${ranking_vivos[i].damage_dealt} ---:skull: :skull: <@${ranking_vivos[i].slack_id}>(morto) `    
+        }
         pos +=1
         Axios({
             method: 'post',                     
