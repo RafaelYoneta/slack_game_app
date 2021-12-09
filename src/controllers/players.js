@@ -297,12 +297,12 @@ async function attack(req,res){
 
                     }else if(players[enemy_position].life > my_player_damage){
                         
-                        players[enemy_position].life = players[enemy_position].life - my_player_damage
+                        //players[enemy_position].life = players[enemy_position].life - my_player_damage
                         msg_attack =`:attack: <@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida `
                         send_resp = true
                         msg ='atacou'
                     }
-                    players[my_player_position].round_action = 1
+                    //players[my_player_position].round_action = 1
                     players[my_player_position].damage_dealt += my_player_damage
                     //salvar alterações
                     const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
@@ -409,7 +409,8 @@ async function start_arena (req,res){
     console.log(ranking_vivos)
    
     for(i=0;i<ranking_vivos.length;i++){ 
-        
+
+        await delay(500)
         if(ranking_vivos[i].alive){
             position = `Posição ${pos} --- Dano Total: ${ranking_vivos[i].damage_dealt} --- <@${ranking_vivos[i].slack_id}> `
         }else{
@@ -423,7 +424,6 @@ async function start_arena (req,res){
                 text:position
             }
         })
-        await delay(500)
     }
     
     
@@ -461,7 +461,7 @@ async function heal(req,res){
         }else if(player[0].alive !== true){
             msg = 'Voce esta fora de combate :skull:'
         }else{
-            let heal_success = Math.round(Math.random() * 10) <=3 ? true : false
+            let heal_success = Math.round(Math.random() * 10) <=2 ? true : false
             //falha ou sucesso na tenatitva
             if(heal_success){
                 //Ajuste do max life para 100
