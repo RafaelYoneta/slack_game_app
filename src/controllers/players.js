@@ -232,7 +232,7 @@ async function attack(req,res){
                 if(!players[my_player_position].weapon){
                     msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar sem uma arma *...... e Falhou!!*`
                     send_resp = true
-                    //players[my_player_position].round_action = 1
+                    players[my_player_position].round_action = 1
                     const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
                     msg ='falhou'
                 }else{
@@ -269,14 +269,14 @@ async function attack(req,res){
                     if(not_found){
                         msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar, mas escorregou :bananadance: :bananadance: *...... e Falhou!!*`
                         send_resp = true
-                        //players[my_player_position].round_action = 1
+                        players[my_player_position].round_action = 1
                         const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
                         msg ='falhou'
                     
                     }else if(attack_success < 2.5){
                         msg_attack = `<@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) tentou atacar  <@${players[enemy_position].slack_id}>  *...... e Falhou!!* \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida`
                         send_resp = true
-                        //players[my_player_position].round_action = 1
+                        players[my_player_position].round_action = 1
                         const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
                         msg ='falhou'
                     }else{
@@ -297,12 +297,12 @@ async function attack(req,res){
 
                     }else if(players[enemy_position].life > my_player_damage){
                         
-                        //players[enemy_position].life = players[enemy_position].life - my_player_damage
+                        players[enemy_position].life = players[enemy_position].life - my_player_damage
                         msg_attack =`:attack: <@${players[my_player_position].slack_id}> (:heart: ${players[my_player_position].life}) atacou <@${players[enemy_position].slack_id}> com ${players[my_player_position].weapon.weapon_slack_code} *${my_player_damage} Dano!*  \n <@${players[enemy_position].slack_id}> agora tem (:heart: ${players[enemy_position].life}) vida `
                         send_resp = true
                         msg ='atacou'
                     }
-                    //players[my_player_position].round_action = 1
+                    players[my_player_position].round_action = 1
                     players[my_player_position].damage_dealt += my_player_damage
                     //salvar alterações
                     const a = await PlayerModel.findOneAndUpdate({slack_id:players[my_player_position].slack_id},players[my_player_position],{new:true})
