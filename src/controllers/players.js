@@ -335,7 +335,7 @@ async function start_arena (req,res){
     const arena_req = req.body
     const arenaId = arena_req.arenaId
 
-    res.status(200)
+    res.status(200).send('partida em andamento')
     
     //inicia partida
     const arena = await ArenaModel.find({id:arenaId})
@@ -347,7 +347,7 @@ async function start_arena (req,res){
         method: 'post',                     
         url: process.env.SLACK_CONNECTION_STRING,
         data: {
-            text:'*Preparem-se a Arena esta prestes a começar!!!!* \n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- \n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores'
+            text:'*Preparem-se a Arena esta prestes a começar!!!!* \n\n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- *\n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar * ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores \n\n'
         }
     })
     await delay(10000)
@@ -372,7 +372,7 @@ async function start_arena (req,res){
             }else{
     
                 await PlayerModel.updateMany({},{$set:{"round_action":0}})
-                let msg_arena = `\n\n *Round ${n}!!* ---- Fight --- ${arena_players.length} jogadores vivos!!! \n \n \n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- \n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores `
+                let msg_arena = `\n\n *------ Round ${n}!!* --------- Fight --- ${arena_players.length} jogadores vivos!!! \n\n\n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- *\n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar * ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores \n\n `
                 
                 //anuncia o round iniciando
                 Axios({
