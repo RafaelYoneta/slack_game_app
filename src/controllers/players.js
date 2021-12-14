@@ -347,7 +347,7 @@ async function start_arena (req,res){
         method: 'post',                     
         url: process.env.SLACK_CONNECTION_STRING,
         data: {
-            text:'*Preparem-se a Arena esta prestes a começar!!!!*'
+            text:'*Preparem-se a Arena esta prestes a começar!!!!* \n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- \n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores'
         }
     })
     await delay(10000)
@@ -367,12 +367,12 @@ async function start_arena (req,res){
            
             //verifica se ainda há jogadores vivos
             if(arena_players.length <= 1){
-                msg = `\n We have a winner!!!! ${arena_players.length} Jogadores na arena \n ---- *imprimindo resultados*`
+                msg = `\n We have a winner!!!! ${arena_players.length} Jogadores na arena \n ---- *imprimindo resultados* \n`
                 
             }else{
     
                 await PlayerModel.updateMany({},{$set:{"round_action":0}})
-                let msg_arena = `*Round ${n}!!* ---- Fight --- ${arena_players.length} jogadores vivos!!!`
+                let msg_arena = `\n\n *Round ${n}!!* ---- Fight --- ${arena_players.length} jogadores vivos!!! \n \n \n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- \n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores `
                 
                 //anuncia o round iniciando
                 Axios({
