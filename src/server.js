@@ -1,6 +1,5 @@
 const express = require('express')
 const cors = require('cors')
-require ('newrelic')
 require('dotenv').config({path:__dirname+'/../.env'})
 
 
@@ -40,12 +39,6 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true }))
 
 app.use('/api',routes)
-//habilitado para resceber o request no formato json
-
-//app.use(express.urlencoded({ extended: true }))
-
-//d6S23nOFpRU6J50xOO
-
 
 
 const port = process.env.PORT || 8080

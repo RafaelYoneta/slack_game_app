@@ -4,44 +4,42 @@ const PlayerModel = require('../models/players')
 const ArenaModel = require('../models/arena')
 const WeaponModel = require('../models/weapons')
 
+const slack_game_params = {
+    //define the name of the channel where the game will play
+    channel:'clash-royale-game' ,
+    //define the msg if the commang is request from the wrong channel
+    channel_not_right_msg: 'O Jogo esta disponível apenas no canal clash-royale-game',
+    arena_not_open_msg: 'Arena ainda não esta aberta, aguarde',
+
+
+
+}
+
 async function get (req,res){
-
-
     const {email} = req.params
-
     const obj = email ? {email:email} : null
-
-
     const player = await PlayerModel.find(obj)
-
-        res.json({ player_count: player.length , players: player})  
-
-        
+    res.json({ player_count: player.length , players: player})         
 }
 
 
 
 async function overallRequest(req,res){
-
-
-    
-    if(req.body.channel_name !== 'clash-royale-game'){
-        res.status(200).send('O Jogo esta disponível apenas no canal clash-royale-game')
+   
+    console.log(slack_game_params.channel)
+    if(req.body.channel_name !== slack_game_params.channel){
+        res.status(200).send(slack_game_params.channel_not_right_msg)
     }else{
-       
-    
+
+    //slack needs the response status right away, in order to prevent time out
     res.status(200)
     
     const user_id = req.body.user_id    
     const name = req.body.user_name
-
-    
     const obj = {slack_id:user_id}
 
     let player = await PlayerModel.find(obj)
-
     const arena = await ArenaModel.find({status:"Active"})
-    
     const arenaId = arena.lenght!==0 ? arena[0]._id : null
     
     
@@ -77,14 +75,14 @@ async function overallRequest(req,res){
     console.log(player.length)
 
     if(arena.length == 0){
-         msg = 'Arena ainda não esta aberta, aguarde'
+         msg = slack_game_params.arena_not_open_msg
 
     } else if(player.length==0){
 
         new_player.save()
        // let player = await PlayerModel.findOneAndUpdate(obj,{arena:arenaId},{new:true})
 
-         msg = `<@${user_id}> entrou na arena :hocho: ${arena[0].name}` 
+         msg = `<@${user_id}> entrou na arena :hocho: ${arena[0].name}`  // the user entered arena msg
 
          
          Axios({
@@ -94,7 +92,7 @@ async function overallRequest(req,res){
                text:msg
              }
            });
-        msg ='Leeeeeroy Jenkins'
+        msg ='Leeeeeroy Jenkins' // private msg for the user that entered arena
 
     } else if (player.length ==1 ){
          msg = 'Prepare-se, a batalha começa em breve!!'
@@ -113,8 +111,8 @@ async function overallRequest(req,res){
 async function searchWeapon(req,res){
 
     
-    if(req.body.channel_name !== 'clash-royale-game'){
-        res.status(200).send('O Jogo esta disponível apenas no canal clash-royale-game')
+    if(req.body.channel_name !== slack_game_params.channel){
+        res.status(200).send(slack_game_params.channel_not_right_msg)
     }else{
         
         res.status(200)
@@ -372,7 +370,7 @@ async function start_arena (req,res){
             }else{
     
                 await PlayerModel.updateMany({},{$set:{"round_action":0}})
-                let msg_arena = `\n\n *------ Round ${n}!!* --------- Fight --- ${arena_players.length} jogadores vivos!!! \n\n\n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- *\n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar * ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores \n\n `
+                let msg_arena = `*------ Round ${n}!!* ------- ${arena_players.length} jogadores vivos!!! \n\n\n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- *\n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar * ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores \n\n `
                 
                 //anuncia o round iniciando
                 Axios({
@@ -443,8 +441,8 @@ async function heal(req,res){
     let msg
     const user_heal = req.body.user_id
     
-    if(req.body.channel_name !== 'clash-royale-game'){
-        res.status(200).send('O Jogo esta disponível apenas no canal clash-royale-game')
+    if(req.body.channel_name !== slack_game_params.channel){
+        res.status(200).send(slack_game_params.channel_not_right_msg)
     }else{
 
         //procurar usuário
@@ -510,8 +508,8 @@ async function hide(req,res){
     let msg
     const user_hide = req.body.user_id
     
-    if(req.body.channel_name !== 'clash-royale-game'){
-        res.status(200).send('O Jogo esta disponível apenas no canal clash-royale-game')
+    if(req.body.channel_name !== slack_game_params.channel){
+        res.status(200).send(slack_game_params.channel_not_right_msg)
     }else{
 
         //procurar usuário
