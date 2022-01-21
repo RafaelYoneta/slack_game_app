@@ -17,6 +17,10 @@ leeroy jenkins!!!
 ![Search for a random weapon](https://static.wixstatic.com/media/17b279_6099fd6932744d97a17851cc0934bd07~mv2.gif)
 
 ## How to install
+0. Create, configure app and activate a income webhook. 
+- define the name of the channel in wich the game will play on your workspace
+![create an app on your slack account](https://static.wixstatic.com/media/17b279_a0a07a1d8a114866886c5af74f24dd1e~mv2.png)
+
 1. Create a ".env" file with the following variables:
  - MONGO_CONNECTION_STRING = mongoDB conection String
  - SLACK_CONNECTION_STRING = Create a Slack webhook URP and use here
@@ -30,6 +34,14 @@ leeroy jenkins!!!
  - Create a database and a Collection named `weapons`
    Create the weapons as the scheme: `{"name":"Knife","slack_weapon_code":":hocho:","weapon_code":1,"min_dmg":10,"max_dmg":15,"rarity":"Normal"}`
  . You can define the rarity of the weapon, the icon that will show in slack and the min and max damage of the weapon
+
+ 4. Define the channel name in wich you will play the game  /controllers/players.js in the slack_game_params variable.
+
+ 5. Configure the commands on slack (after you hosted the app, i was using a free tier account on heroku)
+ ![configure slack commands](https://static.wixstatic.com/media/17b279_98857f76e057470ea00c87059da39da9~mv2.png)
+
+Remeber: when testing on postman, you need to send the body using urlencoded format (same as slack will send)
+ Thats it, you are ready to test!!
  
 
 
