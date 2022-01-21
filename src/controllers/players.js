@@ -132,29 +132,29 @@ async function searchWeapon(req,res){
             res.send('Você esta fora de combate :skull:')
                
         }else if(player.length !== 0){
-            const weapon_cod = Math.round(Math.random() * 5)//mudar a logica de pegar a quantidade de armas
-            console.log(weapon_cod)
-            const weapon_obj = {weapon_code:weapon_cod}
+            const weapon = await WeaponModel.find() // get all weapons
+            const weapon_cod = Math.round(Math.random() * weapon.length -1)//random number to define
+            
+
         
-            const weapon = await WeaponModel.find(weapon_obj)
                
 
      const new_weapon = PlayerModel({
          _id:player[0]._id,
-         round_action:1,
+         round_action:0,
         weapon:{
-            min_dmg: weapon[0].min_dmg, 
-            max_dmg: weapon[0].max_dmg,
-            rarity:weapon[0].rarity,
-            weapon_name:weapon[0].name,
-            weapon_slack_code:weapon[0].slack_weapon_code},
+            min_dmg: weapon[weapon_cod].min_dmg, 
+            max_dmg: weapon[weapon_cod].max_dmg,
+            rarity:weapon[weapon_cod].rarity,
+            weapon_name:weapon[weapon_cod].name,
+            weapon_slack_code:weapon[weapon_cod].slack_weapon_code},
     }) 
 
 
-            if(weapon[0].rarity == "Normal"){
-                msg = `<@${user_id}> encontrou uma ${weapon[0].slack_weapon_code}, ${weapon[0].name}, ${weapon[0].rarity}` 
-            }else if(weapon[0].rarity == "Raro"){
-                msg = `WTF!! <@${user_id}> encontrou uma ${weapon[0].slack_weapon_code}, ${weapon[0].name}, ${weapon[0].rarity}` 
+            if(weapon[weapon_cod].rarity == "Normal"){
+                msg = `<@${user_id}> encontrou uma ${weapon[weapon_cod].slack_weapon_code}, ${weapon[weapon_cod].name}, ${weapon[weapon_cod].rarity}` 
+            }else if(weapon[weapon_cod].rarity == "Raro"){
+                msg = `WTF!! <@${user_id}> encontrou uma ${weapon[weapon_cod].slack_weapon_code}, ${weapon[weapon_cod].name}, ${weapon[weapon_cod].rarity}` 
             }
 
            
@@ -168,7 +168,7 @@ async function searchWeapon(req,res){
                 }
               });
 
-            res.send(`Voce conseguiu uma arma ${weapon[0].name} / ${weapon[0].rarity} `)
+            res.send(`Voce conseguiu uma arma ${weapon[weapon_cod].name} / ${weapon[weapon_cod].rarity} `)
 
         
         }else{
