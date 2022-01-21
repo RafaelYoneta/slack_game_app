@@ -1,5 +1,5 @@
 
-#Slack - Clash Royale Game APP
+##Slack - Clash Royale Game APP
 
 This is a beta of a clash royale slack game to be played with your team on slack. You and your buds enter the arena and fight each other until the end of the rounds or until there is only one player left. Each round, players can use one of the following comands.
 
@@ -39,9 +39,12 @@ leeroy jenkins!!!
 
  5. Configure the commands on slack (after you hosted the app, i was using a free tier account on heroku)
  ![configure slack commands](https://static.wixstatic.com/media/17b279_98857f76e057470ea00c87059da39da9~mv2.png)
+ Each command will send a POST request for one of the functions of the game!
 
-Remeber: when testing on postman, you need to send the body using urlencoded format (same as slack will send)
- Thats it, you are ready to test!!
+Remeber: when testing on postman, you need to send the body using urlencoded format (same as slack will use)
+
+ Thats it, you are ready to test!!!
+ 
  
 
 
