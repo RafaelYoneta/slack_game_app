@@ -1,1 +1,1 @@
-![demo how to atack](/demo/atack.gif)
+![demo how to atack](demo/atacar.gif)
