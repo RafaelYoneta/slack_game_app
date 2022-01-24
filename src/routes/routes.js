@@ -2,14 +2,12 @@ const router = require('express').Router()
 
 const PlayerController = require('../controllers/players')
 
-//list of players
-router.get('/players/:email?', PlayerController.get)
 
 //enter arena
 router.post('/entrar_arena', (req,res,next) =>{
     // middleware - equilize the request once it comes throu Slack webhook 
     //pt-Se existir faz o parse e devolve para body e se não existir manda para o next 
-
+    
     if(!req.body.payload){
         next()
     }else{
@@ -35,5 +33,7 @@ router.post('/procurar_vida',PlayerController.heal)
 //make user invisible for 1 round
 router.post('/invisivel', PlayerController.hide)
 
+//list of players
+router.get('/players/:email?', PlayerController.get)
 
 module.exports = router
