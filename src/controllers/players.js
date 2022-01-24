@@ -345,7 +345,7 @@ async function start_arena (req,res){
         method: 'post',                     
         url: process.env.SLACK_CONNECTION_STRING,
         data: {
-            text:'*Preparem-se a Arena esta prestes a começar!!!!* \n\n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- *\n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar * ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores \n\n'
+            text:'*Preparem-se a Arena esta prestes a começar!!!!'
         }
     })
     await delay(10000)
@@ -370,7 +370,7 @@ async function start_arena (req,res){
             }else{
     
                 await PlayerModel.updateMany({},{$set:{"round_action":0}})
-                let msg_arena = `*------ Round ${n}!!* ------- ${arena_players.length} jogadores vivos!!! \n\n\n *----digite um dos comandos abaixo em cada um dos rounds para jogar----- *\n */procurar_arma * ---- para procurar uma arma e poder atacar \n */atacar * ---- para atacar outro jogador \n */procurar_vida * ---- recurar vida \n */ficar _invisivel * ---- para se esconder de outros jogadores \n\n `
+                let msg_arena = `*------ Round ${n}!!* ------- ${arena_players.length} jogadores vivos!!! `
                 
                 //anuncia o round iniciando
                 Axios({
